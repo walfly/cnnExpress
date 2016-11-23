@@ -35,6 +35,17 @@ module.exports = {
             return fetch("http://data.cnn.com/ELECTION/2016/bop/p.json")
                     .then(res => { return res.json()})
                     .then(json => {
+                        const dem = json.candidates.find(cand => {
+                            return cand.party === 'D';
+                        });
+                        const rep = json.candidates.find(cand => {
+                            return cand.party === 'R';
+                        });
+                        if(Number(dem.cvotes.replace(/,/g, '')) < 64223958) {
+                            dem.cvotes = '64,223,958';
+                            rep.cvotes = '62,206,395';
+                            json.candidates = [dem, rep];
+                        }
                         cache.partial = json;
                         json.wfLastUpdated = key;
                         return json;
